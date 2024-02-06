@@ -30,10 +30,25 @@ type TransactionOutput struct{
 
 }
 
-func main(){
-   transactionhex:=os.Args[1]
+func main() {
+	transactionhex:=os.Args[1]
+	b,err:= decodeTransaction(transactionhex)
+	if err != nil {
+        fmt.Println(err)
+        
+    }
+   fmt.Println(string(b))
+	// fmt.Println("Transaction Version:", transaction.Version)
 
-	hexString, err:= hex.DecodeString(transactionhex)
+	// fmt.Println("Transaction Inputs:",transaction.Inputs)
+	// fmt.Println("Transaction Outputs:",transaction.Outputs)
+	// fmt.Println("Transaction Locktime:", transaction.Locktime)
+
+}
+func decodeTransaction(transactionhexString string) ([]byte,error){
+	
+
+	hexString, err:= hex.DecodeString(transactionhexString)
 
 	if(err !=nil){
 		fmt.Println("Error decoding raw transaction hex:", err)
@@ -44,7 +59,7 @@ func main(){
 	err = tx.Deserialize(bytes.NewReader(hexString))
 	if err != nil {
 		fmt.Println("Error deserializing raw transaction:", err)
-		return
+		return nil,err
 	}
 	transaction.Version=int(tx.Version)
 	transaction.Locktime=int(tx.LockTime)
@@ -81,14 +96,10 @@ func main(){
 	b, err := json.Marshal(transaction)
     if err != nil {
         fmt.Println(err)
-        return
+        return nil,err
     }
-    fmt.Println(string(b))
-	//fmt.Println(transaction)
-	// fmt.Println("Transaction Version:", transaction.Version)
+    
+	return b,err
 
-	// fmt.Println("Transaction Inputs:",transaction.Inputs)
-	// fmt.Println("Transaction Outputs:",transaction.Outputs)
-	// fmt.Println("Transaction Locktime:", transaction.Locktime)
 
-}	
+}
